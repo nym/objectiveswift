@@ -90,6 +90,24 @@ Available recipes:
     test              # Run project test suite
 #+end_example
 
+** Migrations
+Applying migrations is a two step process where one needs to first generate SQL
+from Typescript definitions, and then apply the SQL to a database.
+
+#+begin_src sh :results output verbatim
+just db-generate
+just db-migrate
+#+end_src
+
+Depending on your development setup, you might need to export a =DATABASE_URL=
+before running the migrate command.
+
+#+begin_src sh :eval never
+export DATABASE_URL="postgres://app:please@127.0.0.1:5432/app_dev"
+#+end_src
+
+Inside a Docker container, be sure to use =postgres= in place of =127.0.0.1=.
+
 * Tasks
 We have more tasks than time allows. This is intentional. Part of working
 together is deciding what to tackle, how deeply to go, and when to move on.
