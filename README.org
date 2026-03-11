@@ -47,7 +47,7 @@ run a full-featured local environment.
 For those who prefer use of containers, we have a Docker Compose configuration
 compatible with tools like Docker and Podman.
 
-#+begin_src sh :results output verbatim
+#+begin_src sh :results output verbatim :eval never
 just dev
 #+end_src
 
