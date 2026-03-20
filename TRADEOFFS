@@ -1,0 +1,24 @@
+Trade offs + Considerations
+
+
+== Speech to Text ==
+
+- The SpeechRecognition approach was a tough call — Whisper would give better transcription accuracy but adds latency and infrastructure overhead, and browser-native is free. Originally I tried to use anthropic, but they don't have a public api for that yet.
+- The feature was written as a component inside the inputs, but the better architecture is a React context provider with a useSpeechCommand hook that pipes transcripts through Claude for intent parsing. This would unlock natural commands like "complete objective about KPIs" rather than just dictation. 
+- Browser support- Firefox silently fails, which means the inputs will not have the microphone icon, but text on the page talks about voice, which should be hidden if that feature is not available. 
+- If the Claude-powered command layer gets built out, the round-trip latency will be noticeable and will need an explicit loading state so it doesn't feel broken.
+
+
+== Design ==
+
+- I went for intentionally bare bones. I explored colours, fonts, and light/dark modes, and prettied up the main page with a brief introduction and microphone graphic. 
+- For personal daily use, I would not have a subpage for objectives.
+- The column layout looks good in a demo but a single column list would be easier to read in practice. 
+- The microphone icon diverges from Anthropic's established UX pattern; a future pass should align with that. Will need to look at Claude as well.
+
+
+== Error Handling / Code Practices ==
+
+- neverthrow was the intention but wasn't integrated by claude despite calling it out originally from the start. Once I realised this wasn't happening, it would have been tough to retrofit. I might try out neverthrow in another commit.
+- Critically, my commits weren't made incrementally during development. When Claude broke the Nix install early on, it was a reminder of how easily recoverable work can be lost. Even rough WIP commits like "wip: voice input skeleton, broken" serve as escape hatches. 
+

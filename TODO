@@ -1,0 +1,68 @@
+
+# Objective Tracking Feature Implementation
+
+## Schema Design
+- [x] Design database schema for objectives
+  - id (uuidv7)
+  - title (string, required)
+  - description (string, optional)
+- [x] Design ObjectiveChange event log
+  - created (datetime)
+  - id (uidv7)
+  - parent_id (foreign key to Objective.id)
+  - completed (boolean)
+- [x] Generate database schema
+- [x] Generate fixtures from Zod schema
+- [x] Migrate database to new schema
+
+## Task 1: Create Objectives
+- [x] Backend: Implement database mutations for creating objectives
+- [x] Backend: Add validation (title required, description optional)
+- [x] Frontend: Create objective form component with Zod validation
+- [x] Frontend: Ensure form validation matches backend validation
+- [x] Test: Unit tests for creation validation (Vitest)
+- [x] Test: E2E tests for creating objectives (Playwright)
+- [x] UI: Display new objectives in list after creation
+
+## Task 2: Delete Objectives
+- [x] Backend: Implement database deletion logic
+- [x] Frontend: Add delete button UI control
+- [x] Frontend: Add confirmation dialog before deletion
+- [x] Test: Unit tests for deletion (Vitest)
+- [x] Test: E2E tests for deletion flow (Playwright)
+- [x] Verify: UI updates immediately after deletion
+
+## Task 3: Complete Objectives
+- [x] Decide: Immutable event-sourcing design vs simple flag?
+- [x] Backend: Implement completion logic
+- [x] Frontend: Add animated checkmark UI control
+- [x] Frontend: Visually distinguish completed objectives (CSS)
+- [x] Test: Unit tests for completion (Vitest)
+- [x] Test: E2E tests for completion flow (Playwright)
+
+## Requirements & Standards
+### Validation
+- [x] Validate all user input on both client and server
+- [x] Derive validation from single TypeScript source of truth
+- [x] Use drizzle-orm/zod integration for consistency
+- [x] Front-end validation inline in components
+
+### Testing
+- [x] Cover all core flows with Vitest unit tests
+- [x] Cover all core flows with Playwright e2e tests
+- [x] Every feature requires both unit + e2e coverage
+- [x] Tests follow Given/When/Then pattern
+
+### Frontend
+- [x] Use shadcn/ui components
+- [x] Use Tailwind CSS 4
+- [x] Pull validation schema from Zod
+- [x] Immediate user feedback
+
+### Error Handling
+- [ ] Use neverthrow for error handling where possible
+- [x] Comprehensive error messages
+
+### Documentation
+- [x] Document design decisions inline as comments
+- [x] Document any trade-offs or assumptions

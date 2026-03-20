@@ -1,4 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(PATH=\"/Users/nym/lets-code/.devenv/profile/bin:/usr/bin:/bin\" node .devenv/profile/bin/../../../node_modules/.bin/react-router)",
+      "Bash(PATH=\"/Users/nym/lets-code/.devenv/profile/bin:/usr/bin:/bin\" .devenv/profile/bin/node ./node_modules/.bin/react-router typegen)",
+      "Bash(PATH=\"/Users/nym/lets-code/.devenv/profile/bin:/usr/bin:/bin\" .devenv/profile/bin/pnpm exec tsc --noEmit)"
+    ]
+  },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["devenv"]
+  "enabledMcpjsonServers": [
+    "devenv"
+  ]
 }

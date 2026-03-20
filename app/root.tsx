@@ -11,10 +11,10 @@ import { I18nextProvider } from "react-i18next";
 import type { Route } from "./+types/root";
 import i18n from "./i18n";
 import { useNonce } from "./nonce-context";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
+import "@fontsource/lora/400.css";
+import "@fontsource/lora/500.css";
+import "@fontsource/lora/600.css";
+import "@fontsource/lora/700.css";
 import "./app.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {

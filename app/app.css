@@ -1,15 +1,98 @@
 @import "tailwindcss";
 
+/* Use class-based dark mode so ThemeToggle controls it via .dark on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Lora", ui-serif, Georgia, serif;
+
+  --color-primary: #10b981; /* emerald-500 */
+  --color-primary-hover: #059669; /* emerald-600 */
+  --color-primary-light: #d1fae5; /* emerald-100 */
+  --color-secondary: #6b7280; /* gray-500 */
+  --color-success: #10b981;
+  --color-error: #ef4444; /* red-500 */
+  --color-error-light: #fee2e2; /* red-100 */
+}
+
+h1, h2, h3, h4, label {
+  font-family: var(--font-sans);
 }
 
 html,
 body {
   @apply bg-white dark:bg-gray-950;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+html.dark {
+  color-scheme: dark;
+}
+
+/* Applied for one frame during theme switches to suppress transition flicker */
+.no-transition * {
+  transition: none !important;
+}
+
+/* ── Animations ──────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.2s ease-out infinite;
 }
