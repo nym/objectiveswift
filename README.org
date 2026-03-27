@@ -1,134 +1,63 @@
-#+title: Let's Code
+#+title: Objective Swift
 
-*Let's Code* is a working React Router application we can hack on for fun.
+*Objective Swift* is a focused, voice-first objective tracker. Capture objectives quickly by keyboard or voice, move them through a simple active → complete → deleted lifecycle, and trust they're stored safely — with the interface staying out of your way.
+
+* How it works
+Objectives are created with a title and an optional description, then live on a card grid until completed or deleted. Completing a card flashes it green and greys it out; the state persists across reloads. Each page shows ten objectives, newest first.
+
+** Voice input
+Every text field has a microphone button powered by the browser's built-in =SpeechRecognition= API — no API key, no server round-trip, no Whisper. Transcription is instant and free. The mic button is hidden automatically on browsers that don't support it (Firefox, or non-HTTPS origins).
+
+Voice commands work mid-sentence:
+- *"next field"* — submits the title field and jumps focus to description, starting a new recording there
+- *"add objective"* — submits the form from whichever field you're dictating into
+
+** Design
+The home page opens with a brief introduction and an animated pulsing microphone graphic. The objectives page uses a column card layout and supports light and dark modes via a toggle in the header.
 
 * Getting started
-One can lean on either =devenv= or =docker compose= to simplify setting up a
-local development environment.
-
-Regardless of how you choose to run the system, the development service will
-listen on port 3000 and Storybook will listen on port 6006.
+The dev server listens on port 3000 and Storybook on port 6006.
 
 - *Application:* http://localhost:3000/
 - *Storybook:* http://localhost:6006/
 
-** =devenv=
-Assuming you have Nix and =devenv= in place, running a development environment
-is as simple as invoking:
+** =devenv= (recommended)
+With Nix and =devenv= installed, one command starts everything — database, migrations, dev server, and Storybook:
 
-#+begin_src sh :results output verbatim
+#+begin_src sh
 devenv up
 #+end_src
 
-** =docker compose=
-With =docker compose= one needs to start their PostgreSQL container ahead of
-invoking the setup task like so:
+** Manual setup
+Start PostgreSQL separately, then:
 
-#+begin_src sh :results output verbatim
-just dev
-just setup
-#+end_src
-
-It is possible to run =just setup= without PostgreSQL running, but you'll
-encounter an error when the setup tasks tries to apply database migrations.
-
-* What's in the box?
-- [[https://reactrouter.com/home][React Router]] is a multi-strategy router for React bridging the gap from React
-  18 to React 19.
-- [[https://pnpm.io/][pnpm]] for lightning-fast installation speeds and a smarter, safer way to manage
-  dependencies.
-- [[https://storybook.js.org/][Storybook]] is a frontend workshop for building UI components and pages in
-  isolation.
-
-[[https://devenv.sh/][devenv]] is an optional dependency that automates the installation of project
-dependencies and coordinates development processes. One can run =devenv up= to
-run a full-featured local environment.
-
-For those who prefer use of containers, we have a Docker Compose configuration
-compatible with tools like Docker and Podman.
-
-#+begin_src sh :results output verbatim :eval never
-just dev
-#+end_src
-
-** Just tasks
-#+begin_src sh :results output verbatim :exports results
-just --list
-#+end_src
-
-#+results:
-#+begin_example
-Available recipes:
-    [build]
-    build             # Build the app
-    docker-build      # Build a container image via Docker
-    docker-run *args  # Run a container image via Docker
-
-    [db]
-    db-generate *args # Generate migration files from Typescript definitions
-    db-migrate *args  # Apply pending migrations
-    db-reset          # Remove project PostgreSQL state
-    psql              # Start an interactive psql session
-
-    [dev]
-    dev               # Start development environment using Docker Compose
-    fmt               # Format project source files
-    lint              # Lint project source files
-    serve             # Run the node server
-    setup             # Prepare local development environment
-    storybook         # Start Storybook
-    storybook-build   # Build Storybook
-
-    [docker]
-    docker *args      # Run docker compose commands
-
-    [release]
-    check             # Type check source files
-    start             # Start the app in production mode
-
-    [test]
-    test              # Run project test suite
-#+end_example
-
-** Migrations
-Applying migrations is a two step process where one needs to first generate SQL
-from Typescript definitions, and then apply the SQL to a database.
-
-#+begin_src sh :results output verbatim
-just db-generate
+#+begin_src sh
 just db-migrate
+just dev
 #+end_src
 
-Depending on your development setup, you might need to export a =DATABASE_URL=
-before running the migrate command.
+Export =DATABASE_URL= first if your Postgres connection differs from the default:
 
-#+begin_src sh :eval never
+#+begin_src sh
 export DATABASE_URL="postgres://app:please@127.0.0.1:5432/app_dev"
 #+end_src
 
-Inside a Docker container, be sure to use =postgres= in place of =127.0.0.1=.
+* Common tasks
 
-* Tasks
-We have more tasks than time allows. This is intentional. Part of working
-together is deciding what to tackle, how deeply to go, and when to move on.
+#+begin_src sh
+just          # type-check + full test suite (unit + e2e)
+just dev      # start dev server on port 3000
+just check    # TypeScript type checking only
+just test     # vitest unit tests + Playwright e2e tests
+just fmt      # format source files
+just storybook       # Storybook on port 6006
+just db-migration    # generate Drizzle migration files
+just db-migrate      # apply pending migrations
+just psql            # interactive psql session
+#+end_src
 
-There is no expectation to finish everything. We're interested in how you
-approach problems, the trade-offs you consider, and how you communicate your
-thinking.
-
-Each task should result in working code integrated with the database and
-accessible in the UI.
-
-In each task we're interested in your approach to validation, testing, and
-presentation. We're an early stage company so pragmatism and the ability to make
-well-informed decisions independently are incredibly important.
-
-** Task 1: Create objectives
-Build the foundation for an objective-tracking feature. Users should be able to
-create an objective with a title and optional description.
-
-** Task 2: Delete objectives
-Add the ability to remove an objective.
-
-** Task 3: Complete objective
-Allow marking an objective as completed.
+* Stack
+- React 19, React Router 7, TypeScript, Tailwind CSS 4
+- Express 5, Drizzle ORM, PostgreSQL 17
+- Playwright (e2e), Storybook (component dev)
+- pnpm, devenv / Nix
