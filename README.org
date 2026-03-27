@@ -1,5 +1,8 @@
 #+title: Objective Swift
 
+/'Add Objective'/
+
+
 *Objective Swift* is a focused, voice-first objective tracker. Capture objectives quickly by keyboard or voice, move them through a simple active → complete → deleted lifecycle, and trust they're stored safely — with the interface staying out of your way.
 
 * Screenshots
