@@ -1,4 +1,47 @@
 import { test, expect } from "@playwright/test";
+import postgres from "postgres";
+
+// Run serially so afterEach cleanup finishes before the next test starts,
+// preventing one test's data from pushing another test's card off the page.
+test.describe.configure({ mode: "serial" });
+
+const DATABASE_URL = process.env.DATABASE_URL ?? "postgres://app:please@127.0.0.1:5432/app_dev";
+const sql = postgres(DATABASE_URL);
+
+// Every title used by tests in this file. Cleaned up in beforeAll (stale data
+// from previous runs) and afterEach (data created during the current test).
+const TEST_TITLES = [
+  "Run 5k every morning",
+  "To be deleted",
+  "Confirm delete test",
+  "Delete me",
+  "Complete me",
+  "Already done",
+  "Persisted completion",
+  "Morning yoga",
+  "Evening reading",
+];
+
+// Titles created during the current test, cleaned up in afterEach.
+let createdTitles: string[] = [];
+
+test.beforeAll(async () => {
+  await sql`DELETE FROM objectives WHERE title = ANY(${TEST_TITLES})`;
+});
+
+test.beforeEach(async () => {
+  createdTitles = [];
+});
+
+test.afterEach(async () => {
+  if (createdTitles.length > 0) {
+    await sql`DELETE FROM objectives WHERE title = ANY(${createdTitles})`;
+  }
+});
+
+test.afterAll(async () => {
+  await sql.end();
+});
 
 test("GET /objectives renders page heading and form", async ({ page }) => {
   await page.goto("/objectives");
@@ -15,6 +58,7 @@ test("submitting the form with a title creates an objective", async ({
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Run 5k every morning");
+  createdTitles.push("Run 5k every morning");
   await page.click('button[type="submit"]');
 
   // The new card should appear in the list
@@ -76,6 +120,7 @@ test("delete button appears on objective cards", async ({ page }) => {
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "To be deleted");
+  createdTitles.push("To be deleted");
   await page.click('button[type="submit"]');
 
   const card = page.locator("li").filter({ hasText: "To be deleted" }).first();
@@ -86,6 +131,7 @@ test("clicking delete once shows a confirmation prompt", async ({ page }) => {
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Confirm delete test");
+  createdTitles.push("Confirm delete test");
   await page.click('button[type="submit"]');
 
   const card = page.locator("li").filter({ hasText: "Confirm delete test" }).first();
@@ -98,6 +144,7 @@ test("confirming delete removes the card from the list", async ({ page }) => {
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Delete me");
+  createdTitles.push("Delete me");
   await page.click('button[type="submit"]');
 
   const card = page.locator("li").filter({ hasText: "Delete me" }).first();
@@ -113,6 +160,7 @@ test("clicking mark as complete checks the checkbox", async ({ page }) => {
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Complete me");
+  createdTitles.push("Complete me");
   await page.click('button[type="submit"]');
 
   const card = page.locator("li").filter({ hasText: "Complete me" }).first();
@@ -125,6 +173,7 @@ test("completed objective shows greyed text after the flash", async ({ page }) =
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Already done");
+  createdTitles.push("Already done");
   await page.click('button[type="submit"]');
 
   const card = page.locator("li").filter({ hasText: "Already done" }).first();
@@ -143,12 +192,16 @@ test("completed state persists after page reload", async ({ page }) => {
   await page.goto("/objectives");
 
   await page.fill('input[name="title"]', "Persisted completion");
+  createdTitles.push("Persisted completion");
   await page.click('button[type="submit"]');
 
   // Scope to the specific card so parallel tests inserting newer objectives
   // don't cause .first() to target the wrong card.
   const card = page.locator("li").filter({ hasText: "Persisted completion" }).first();
-  await card.getByRole("button", { name: "Mark as complete" }).click();
+  await Promise.all([
+    page.waitForResponse(r => r.request().method() === "PATCH" && r.status() === 200),
+    card.getByRole("button", { name: "Mark as complete" }).click(),
+  ]);
   await expect(card.getByRole("button", { name: "Completed" })).toBeVisible();
 
   await page.reload();
@@ -167,6 +220,7 @@ test("multiple objectives render as a grid of cards", async ({ page }) => {
   // items past the 10-item page limit).
   for (const title of ["Morning yoga", "Evening reading"]) {
     await page.fill('input[name="title"]', title);
+    createdTitles.push(title);
     await page.click('button[type="submit"]');
     await expect(page.getByText(title).first()).toBeVisible();
     await page.fill('input[name="title"]', "");
