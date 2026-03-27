@@ -2,6 +2,15 @@
 
 *Objective Swift* is a focused, voice-first objective tracker. Capture objectives quickly by keyboard or voice, move them through a simple active → complete → deleted lifecycle, and trust they're stored safely — with the interface staying out of your way.
 
+* Screenshots
+#+attr_html: :alt Home screen
+[[file:docs/screenshots/home.png]]
+
+#+attr_html: :alt Objectives screen
+[[file:docs/screenshots/objectives.png]]
+
+/Run =just test= to regenerate these./
+
 * How it works
 Objectives are created with a title and an optional description, then live on a card grid until completed or deleted. Completing a card flashes it green and greys it out; the state persists across reloads. Each page shows ten objectives, newest first.
 
